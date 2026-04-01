@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Just one question...</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Poppins, sans-serif;
+      background: linear-gradient(to bottom, #ffe6f0, #ffd6eb);
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* vertical center */
+      align-items: center;     /* horizontal center */
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff3385;
+      font-size: 2em;
+      margin: 0 20px 40px 20px;
+      word-wrap: break-word;
+    }
+
+    /* Button styles */
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #yesBtn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #yesBtn:hover {
+      transform: scale(1.1);
+    }
+
+    #noBtn {
+      background-color: #ff4d4d;
+      color: white;
+      /* removed absolute positioning to keep side-by-side layout */
+    }
+
+    /* Container for buttons */
+    .button-container {
+      display: flex;           /* side by side */
+      justify-content: center; /* center horizontally */
+      gap: 20px;               /* space between buttons */
+      margin-top: 20px;
+    }
+
+    /* floating hearts */
+    .heart {
+      position: absolute;
+      font-size: 20px; /* default heart size */
+      animation: floatUp 5s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); opacity: 1; }
+      100% { transform: translateY(-10vh); opacity: 0; }
+    }
+
+    /* floating images */
+    .float-img {
+      position: absolute;
+      width: 100px;
+      border-radius: 10px;
+      animation: floatImg 8s linear forwards;
+    }
+
+    @keyframes floatImg {
+      0% { transform: translateY(100vh); opacity: 1; }
+      100% { transform: translateY(-10vh); opacity: 0; }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      body {
+        justify-content: center; /* vertical centering */
+        align-items: center;     /* horizontal centering */
+      }
+
+      h1 {
+        font-size: 6em; /* bigger text on mobile */
+        margin-bottom: 50px; /* space below heading */
+      }
+
+      .button-container {
+        gap: 20px; /* space between buttons */
+      }
+
+      button {
+        font-size: 28px;   /* bigger buttons */
+        padding: 15px 30px; 
+      }
+
+      .heart {
+        font-size: 35px;  /* bigger hearts */
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1 id="question">Do you forgive me? 💔</h1>
+
+  <div class="button-container">
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 😢</button>
+  </div>
+
+  <script>
+    const question = document.getElementById("question");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const buttonContainer = document.querySelector('.button-container');
+
+    let stage = 0;
+
+    yesBtn.onclick = function() {
+      question.innerText = "I love you bbe ❤️🥺";
+      buttonContainer.style.display = "none";
+
+      createHearts(25);
+      createImages(6);
+    };
+
+    noBtn.onclick = function() {
+      if (stage === 0) {
+        question.innerText = "Are you sure? 😢";
+        stage = 1;
+      } else {
+        // Move button randomly without breaking layout
+        const maxX = window.innerWidth - noBtn.offsetWidth;
+        const maxY = window.innerHeight - noBtn.offsetHeight;
+        const randX = Math.random() * maxX;
+        const randY = Math.random() * maxY;
+        noBtn.style.transform = `translate(${randX - noBtn.offsetLeft}px, ${randY - noBtn.offsetTop}px)`;
+
+        // Optional: make Yes button slightly bigger each dodge
+        let size = parseInt(window.getComputedStyle(yesBtn).fontSize);
+        yesBtn.style.fontSize = (size + 2) + "px";
+      }
+    };
+
+    function createHearts(count) {
+      for (let i = 0; i < count; i++) {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "💖";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = (3 + Math.random() * 2) + "s";
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 5000);
+      }
+    }
+
+    function createImages(count) {
+      const images = [
+        "https://raw.githubusercontent.com/Joshriel/forgive/main/WhatsApp%20Image%202026-03-31%20at%2010.23.07%20(1).jpeg",
+        "https://i.imgur.com/jQ9XQ0P.png",
+        "https://i.imgur.com/Z7AzH2c.png"
+      ];
+
+      const usedX = [];
+      const minDistance = 120;
+
+      for (let i = 0; i < count; i++) {
+        let img = document.createElement("img");
+        img.src = images[Math.floor(Math.random() * images.length)];
+        img.className = "float-img";
+
+        // avoid overlapping
+        let x, attempts = 0;
+        do {
+          x = Math.random() * 90;
+          attempts++;
+          if (attempts > 20) break;
+        } while (usedX.some(u => Math.abs(u - x) < minDistance / window.innerWidth * 100));
+
+        usedX.push(x);
+        img.style.left = x + "vw";
+        img.style.animationDuration = (6 + Math.random() * 4) + "s";
+
+        document.body.appendChild(img);
+        setTimeout(() => img.remove(), 9000);
+      }
+    }
+  </script>
+
+</body>
+</html>
