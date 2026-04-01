@@ -11,7 +11,6 @@
       overflow: hidden;
     }
 
-    /* Full-page container */
     .page-container {
       position: relative;
       width: 100%;
@@ -21,14 +20,13 @@
       align-items: center;
     }
 
-    /* Text container */
     .text-container {
       position: relative;
-      background: linear-gradient(to bottom, #ffe6f0, #ffd6eb); /* same as body */
+      background: linear-gradient(to bottom, #ffe6f0, #ffd6eb);
       padding: 40px 60px;
       border-radius: 20px;
       text-align: center;
-      z-index: 10; /* above images */
+      z-index: 10;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
 
@@ -36,10 +34,8 @@
       color: #ff3385;
       font-size: 5.2em;
       margin: 0 0 30px 0;
-      word-wrap: break-word;
     }
 
-    /* Buttons */
     .button-container {
       display: flex;
       justify-content: center;
@@ -59,37 +55,50 @@
       background-color: #4CAF50;
       color: white;
     }
-    #yesBtn:hover {
-      transform: scale(1.1);
-    }
+    #yesBtn:hover { transform: scale(1.1); }
 
     #noBtn {
       background-color: #ff4d4d;
       color: white;
     }
 
-    /* Floating images around text */
-    .float-img {
+    /* Carousel container for images */
+    .carousel-container {
       position: absolute;
-      width: 100px;
-      border-radius: 10px;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      max-width: 500px;
+      height: 250px;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
       z-index: 5;
-      transition: transform 0.3s ease-in-out;
+      pointer-events: none; /* images not clickable */
     }
 
-    /* Mobile adjustments */
+    .carousel-container img {
+      width: 80px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .carousel-container img.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
     @media (max-width: 600px) {
-      h1 {
-        font-size: 6em;
-        margin-bottom: 30px;
-      }
-      button {
-        font-size: 28px;
-        padding: 15px 30px;
-      }
-      .float-img {
-        width: 70px;
-      }
+      h1 { font-size: 5em; margin-bottom: 30px; }
+      button { font-size: 28px; padding: 15px 30px; }
+      .carousel-container { height: 180px; }
+      .carousel-container img { width: 60px; height: 90px; }
     }
 
   </style>
@@ -97,7 +106,6 @@
 <body>
 
   <div class="page-container">
-    <!-- Text and buttons in center -->
     <div class="text-container" id="textContainer">
       <h1 id="question">Do you forgive me? 💔</h1>
       <div class="button-container">
@@ -105,20 +113,28 @@
         <button id="noBtn">No 😢</button>
       </div>
     </div>
+    <div class="carousel-container" id="carousel"></div>
   </div>
 
   <script>
     const question = document.getElementById("question");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
-    const textContainer = document.getElementById("textContainer");
+    const carousel = document.getElementById("carousel");
+
+    const images = [
+      "https://raw.githubusercontent.com/Joshriel/forgive/main/WhatsApp%20Image%202026-03-31%20at%2010.23.07%20(1).jpeg",
+      "https://i.imgur.com/jQ9XQ0P.png",
+      "https://i.imgur.com/Z7AzH2c.png"
+    ];
+
     let stage = 0;
 
     yesBtn.onclick = function() {
       question.innerText = "I love you bbe ❤️🥺";
-      textContainer.querySelector('.button-container').style.display = "none";
+      document.querySelector('.button-container').style.display = "none";
 
-      createImagesAroundText(6);
+      startCarousel();
     };
 
     noBtn.onclick = function() {
@@ -130,30 +146,27 @@
       }
     };
 
-    function createImagesAroundText(count) {
-      const images = [
-        "https://raw.githubusercontent.com/Joshriel/forgive/main/WhatsApp%20Image%202026-03-31%20at%2010.23.07%20(1).jpeg",
-        "https://i.imgur.com/jQ9XQ0P.png",
-        "https://i.imgur.com/Z7AzH2c.png"
-      ];
-
-      const containerRect = textContainer.getBoundingClientRect();
-
+    function startCarousel() {
+      let index = 0;
+      const count = 5; // number of images visible
       for (let i = 0; i < count; i++) {
         const img = document.createElement("img");
         img.src = images[Math.floor(Math.random() * images.length)];
-        img.className = "float-img";
-
-        // Random position around text container
-        let x = containerRect.left + Math.random() * containerRect.width - containerRect.width/2 - 50;
-        let y = containerRect.top + Math.random() * containerRect.height - containerRect.height/2 - 50;
-
-        img.style.left = `${x}px`;
-        img.style.top = `${y}px`;
-
-        document.body.appendChild(img);
+        carousel.appendChild(img);
       }
+
+      const imgs = carousel.querySelectorAll("img");
+
+      function showNext() {
+        imgs.forEach(img => img.classList.remove("show"));
+        imgs[index % imgs.length].classList.add("show");
+        index++;
+        setTimeout(showNext, 800); // every 0.8s
+      }
+
+      showNext();
     }
+
   </script>
 
 </body>
