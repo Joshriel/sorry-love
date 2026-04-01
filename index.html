@@ -50,16 +50,9 @@
       transition: 0.2s;
     }
 
-    #yesBtn {
-      background-color: #4CAF50;
-      color: white;
-    }
+    #yesBtn { background-color: #4CAF50; color: white; }
     #yesBtn:hover { transform: scale(1.1); }
-
-    #noBtn {
-      background-color: #ff4d4d;
-      color: white;
-    }
+    #noBtn { background-color: #ff4d4d; color: white; }
 
     /* Full-page image grid */
     .image-grid {
@@ -74,8 +67,8 @@
     }
 
     .image-grid img {
-      flex: 1 0 33.33%; /* 3 images per row */
-      height: 33.33vh; /* row height */
+      flex: 1 0 33.33%;  /* 3 images per row */
+      height: 33.33vh;   /* proportional height for desktop */
       object-fit: cover;
       margin: 0;
       border-radius: 0;
@@ -86,8 +79,8 @@
       h1 { font-size: 4em; margin-bottom: 20px; }
       button { font-size: 24px; padding: 12px 25px; }
       .image-grid img {
-        flex: 1 0 50%; /* 2 images per row on mobile */
-        height: 50vh;
+        flex: 1 0 33.33%; /* still 3 images per row */
+        height: 33.33vw;  /* square based on viewport width */
       }
     }
   </style>
@@ -144,12 +137,16 @@
     };
 
     function fillImageGrid() {
-      // Display all images in order
-      images.forEach(src => {
-        const img = document.createElement("img");
-        img.src = src;
-        imageGrid.appendChild(img);
-      });
+      const rows = 3; // 3 rows
+      const cols = 3; // 3 columns
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const img = document.createElement("img");
+          img.src = images[Math.floor(Math.random() * images.length)];
+          imageGrid.appendChild(img);
+        }
+      }
     }
   </script>
 
