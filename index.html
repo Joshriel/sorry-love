@@ -54,21 +54,22 @@
     #yesBtn:hover { transform: scale(1.1); }
     #noBtn { background-color: #ff4d4d; color: white; }
 
-    /* Full-page image grid */
+    /* Full-page image grid using CSS Grid */
     .image-grid {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 1fr;
       z-index: 5;
     }
 
     .image-grid img {
-      flex: 1 0 33.33%;  /* 3 images per row */
-      height: 33.33vh;   /* proportional height for desktop */
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       margin: 0;
       border-radius: 0;
@@ -78,9 +79,8 @@
     @media (max-width: 600px) {
       h1 { font-size: 4em; margin-bottom: 20px; }
       button { font-size: 24px; padding: 12px 25px; }
-      .image-grid img {
-        flex: 1 0 33.33%; /* still 3 images per row */
-        height: 33.33vw;  /* square based on viewport width */
+      .image-grid {
+        grid-template-columns: repeat(3, 1fr); /* still 3 per row on mobile */
       }
     }
   </style>
@@ -137,15 +137,11 @@
     };
 
     function fillImageGrid() {
-      const rows = 3; // 3 rows
-      const cols = 3; // 3 columns
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const img = document.createElement("img");
-          img.src = images[Math.floor(Math.random() * images.length)];
-          imageGrid.appendChild(img);
-        }
+      const totalImages = 9; // 3x3 grid
+      for (let i = 0; i < totalImages; i++) {
+        const img = document.createElement("img");
+        img.src = images[Math.floor(Math.random() * images.length)];
+        imageGrid.appendChild(img);
       }
     }
   </script>
